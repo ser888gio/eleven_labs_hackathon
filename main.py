@@ -26,6 +26,7 @@ class BioUpdate(BaseModel):
 def read_root():
     return {"message": "ElevenLabs Hackathon Backend is running"}
 
+@app.post("/")
 @app.post("/webhook/bio")
 def receive_bio(data: BioUpdate):
     """
