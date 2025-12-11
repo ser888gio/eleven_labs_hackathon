@@ -6,10 +6,7 @@ function App() {
   const [bioData, setBioData] = useState<string>("");
   const [copied, setCopied] = useState(false);
 
-  const agentId = import.meta.env.EL_AGENT_ID;
-
   const conversation = useConversation({
-    agentId: agentId,
     onConnect: () => {
       console.log("Connected to AI agent");
     },
@@ -42,9 +39,13 @@ function App() {
 
   const handleStartInterview = async () => {
     try {
-      await conversation.startSession();
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      await conversation.startSession({
+        agentId: import.meta.env.VITE_EL_AGENT_ID,
+      });
     } catch (error) {
-      console.error("Failed to start session:", error);
+      console.error("Failed to start conversation", error);
     }
   };
 
