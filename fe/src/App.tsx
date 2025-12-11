@@ -1,10 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { Mic, MicOff, Sparkles, Copy, Check } from "lucide-react";
 
 function App() {
   const [bioData, setBioData] = useState<string>("");
   const [copied, setCopied] = useState(false);
+
+  // Poll for bio from backend
+  useEffect(() => {
+    const pollBio = async () => {
+      if (bioData) return;
+      try {
+        const response = await fetch("http://localhost:8000/bio/default");
+        const data = await response.json();
+        if (data.status === "complete" && data.bio) {
+          setBioData(data.bio);
+        }
+      } catch (error) {
+        // Ignore errors (backend might be down or not ready)
+      }
+    };
+
+    const interval = setInterval(pollBio, 2000);
+    return () => clearInterval(interval);
+  }, [bioData]);
 
   const conversation = useConversation({
     onConnect: () => {
